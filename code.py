@@ -10,6 +10,7 @@ def menu():
      jefe_turno=input("ingrese el jefe de turno")
      maquinaria=input("ingrese la maquinaria a emplear")
 
+print("carlos")
 def validarDate(date):
     while True:
         try:
