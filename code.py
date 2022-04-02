@@ -7,7 +7,8 @@ def menu():
      turno1 = int(input("ingrese turno"))
      horaIncial = int(input("ingrese hora inicial"))
      horaFinal = int(input("ingrese fecha final"))
-
+     jefe_turno=input("ingrese el jefe de turno")
+     maquinaria=input("ingrese la maquinaria a emplear")
 
 def validarDate(date):
     while True:
@@ -33,7 +34,8 @@ def validarhora(h):
     
        
     
-#def main():
+def main():
+    menu()
     
     
     
