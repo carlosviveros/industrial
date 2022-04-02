@@ -13,6 +13,7 @@ def menu():
     maquinaria = input("ingrese la maquinaria a emplear")
 
 
+print("carlos")
 def validarDate(date):
     while True:
         try:
