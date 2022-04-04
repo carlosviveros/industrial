@@ -4,61 +4,61 @@ import json
 
 
 def formulario():
-    for iteracion in range(3):
-        iteracion+=1
         fecha = validarDate()
-        print("ingrese turno")
-        turno1 = capturarNumero()
-        print("Ingresa la hora inicial")
-        horaIncial = validarhora()
-        print("Ingresa la hora final")
-        horaFinal = validarhora()
-        jefe_turno = input("ingrese el jefe de turno: ")
-        print()
-        print("Maquinaria #", iteracion)
-        maquinaria = input("ingrese la maquinaria a emplear: ")
+        for iteracion in range(3):
+            iteracion+=1
+            print("ingrese turno")
+            turno1 = capturarNumero()
+            print("Ingresa la hora inicial")
+            horaIncial = validarhora()
+            print("Ingresa la hora final")
+            horaFinal = validarhora()
+            jefe_turno = input("ingrese el jefe de turno: ")
+            print() 
+            print("Maquinaria #", iteracion)
+            maquinaria = input("ingrese la maquinaria a emplear: ")
 
-        resumen = []
+            resumen = []
 
-        desperdicio = ["preforma", "envase"]
-        datos = {
-            "produccion": 0,
-            "desperdicio": [],
-            "conforme": 0
-        }
-        for i in desperdicio:
-            print("Desperdicio "+i+":")
+            desperdicio = ["preforma", "envase"]
+            datos = {
+                "produccion": 0,
+                "desperdicio": [],
+                "conforme": 0
+            }
+            for i in desperdicio:
+                print("Desperdicio "+i+":")
+                x = capturarNumero()
+                datos["desperdicio"].append(x)
+            print("Producción total:")
             x = capturarNumero()
-            datos["desperdicio"].append(x)
-        print("Producción total:")
-        x = capturarNumero()
-        datos["produccion"] = x
-        datos["conforme"] = datos["produccion"] - sum(datos["desperdicio"])
-        resumen.append(datos)
-    print()
-    print(
-        "fecha:",
-        fecha,
-        "- Hora inicial:",
-        horaIncial,
-        "- Hora Final:",
-        horaFinal,
-        "- Jefe de turno:",
-        jefe_turno,
-        "- Maquinaria Usada:",
-        maquinaria
-    )
-    print()
-    neta = 0
-    for e in resumen:
-        print("Maquina", iteracion)
-        print("Despercicio preforma:", e["desperdicio"][0])
-        print("Despercicio envase:", e["desperdicio"][1])
-        print("Producción Total:", e["produccion"])
-        print("Producción Conforme:", e["conforme"])
-        neta += e["conforme"]
+            datos["produccion"] = x
+            datos["conforme"] = datos["produccion"] - sum(datos["desperdicio"])
+            resumen.append(datos)
         print()
-    print("Produccion neta: ", neta)
+        print(
+            "fecha:",
+            fecha,
+            "- Hora inicial:",
+            horaIncial,
+            "- Hora Final:",
+            horaFinal,
+            "- Jefe de turno:",
+            jefe_turno,
+            "- Maquinaria Usada:",
+            maquinaria
+        )
+        print()
+        neta = 0
+        for e in resumen:
+            print("Maquina", iteracion)
+            print("Despercicio preforma:", e["desperdicio"][0])
+            print("Despercicio envase:", e["desperdicio"][1])
+            print("Producción Total:", e["produccion"])
+            print("Producción Conforme:", e["conforme"])
+            neta += e["conforme"]
+            print()
+        print("Produccion neta: ", neta)
 
 
 def capturarNumero():
