@@ -13,13 +13,15 @@ from tkinter import (
     ttk
 )
 
-
+#Como su nombre lo indica, retorna la fecha de hoy
 def _today_date():
     return datetime.date.today().strftime("%d/%m/%Y")
 
 
+#Con el decorador "Dataclass" se pretende facilitar la creación de clases que poseean datos. 
 @dataclass
 class Formulario:
+    #Se definen los atributos de la clase con sus correspondientes tipos de datos:
     fecha: str
     turno: int
     hora_inicial: str = field(default="00:00")
@@ -31,7 +33,7 @@ class Formulario:
     produccion_total: str = ""
     total_desperdicio: str = field(init=False)
     produccion_conforme: str = field(init=False)
-
+#Con el método post_init se inicalizan variables que dependerán de uno o más campos 
     def __post_init__(self):
         try:
             desperdicio = float(self.preforma) + float(self.envase)
@@ -39,13 +41,13 @@ class Formulario:
             self.total_desperdicio = str(desperdicio)
             self.produccion_conforme = str(conforme)
         except ValueError:
-            self.total_desperdicio = "0"
+            self.total_desperdicio = "0" 
             self.produccion_conforme = "0"
-
+#El método str como su nombre lo indica devolverá en String (cadena de texto), los datos de la clase para luego "mostrarlos" en donde se deseen poner
     def to_str(self):
         return (
             f"Fecha: {self.fecha}\n"
-            f"Maquina#: {self.turno}\n"
+            f"Turno: {self.turno}\n"
             f"Hora inicial: {self.hora_inicial}\n"
             f"Hora final: {self.hora_final}\n"
             f"Jefe turno: {self.jefe_turno}\n"
@@ -55,18 +57,20 @@ class Formulario:
             f"Producción total: {self.produccion_total}\n"
             f"Total desperdicio: {self.total_desperdicio}\n"
             f"Producción conforme: {self.produccion_conforme}\n"
-        ) 
+        )
 
-
+#La clase widget hereda la clase frame
 class Widget(Frame):
-
+     #el método init de la clase widget tendrá dos atributos: master y turno
     def __init__(self, master, turno):
+        #Para acceder a los elementos(métodos y atributos) de la clase padre frame:
         super().__init__(master)
         self.turno = turno
         self.setup_ui()
+        #Se recorre cada widget para agregar un "espaciado" de en 5  "x" y 5 en "y"  
         for widget in self.winfo_children():
             widget.grid_configure(padx=5, pady=5)
-
+        #En este método se crean todos los widgets que se utilizarán, es decir, tanto labels como sus entradas de texto. Y de igual forma,  posicionarán de acuerdo al grid de las ventanas (columnas)
     def setup_ui(self):
         Label(self, text="Hora inicial").grid(row=1, column=0, sticky="e")
         self.ent_hora_inicial = Entry(self)
@@ -127,7 +131,8 @@ class Widget(Frame):
             self, text="Informe", bg="#EFDAD7", command=self.informe
         )
         self.btn_informe.grid(row=14, columnspan=2)
-
+  
+  #El método calcular captura en la instancia "formulario",  las diferentes entradas de texto
     def calcular(self):
         formulario = Formulario(
             fecha=_today_date(),
@@ -141,13 +146,12 @@ class Widget(Frame):
             produccion_total=self.ent_produccion_total.get(),
         )
         self.f = formulario
+        #El texto del label "total_desperdicio" será igual al atributo de instancia .total_desperdicio. Y  de la misma forma ocurre con 
+        #produccion conforme
         self.lbl_total_desperdicio.config(text=formulario.total_desperdicio)
         self.lbl_produccion_conforme.config(text=formulario.produccion_conforme)
-        return float(formulario.total_desperdicio)
-    
-    
-    
-    
+        #retorna 
+        return formulario
 
     def informe(self):
         display = Toplevel()
@@ -197,33 +201,29 @@ class Container(Frame):
         )
         self.lbl_total_desperdicio = Label(self.lbf_informe, text="")
         self.lbl_total_desperdicio.grid(row=0, column=2)
-        
-        #porcentaje
         Label(self.lbf_informe, text="Porcentaje de desperdicio").grid(
             row=0, column=3,
         )
-        self.lbl_porcentaje = Label(self.lbf_informe,text="")
-        self.lbl_porcentaje.grid(row=0, column=4)
-        
-        Label(self.lbf_informe, text="Total de Produccion").grid(
+        self.lbl_porcentaje_desperdicio = Label(self.lbf_informe, text="")
+        self.lbl_porcentaje_desperdicio.grid(row=0, column=4)
+        Label(self.lbf_informe, text="Total de producción").grid(
             row=0, column=5,
         )
-        self.lbl_produccion = Label(self.lbf_informe,text="")
+        self.lbl_produccion = Label(self.lbf_informe, text="")
         self.lbl_produccion.grid(row=0, column=6)
 
     def update(self):
-        data = []
-        for w in self.widgets:
-            data.append(w.calcular())
-        desperdicio = sum(data)
-        #conforme=sum(data)
-        #self.lbl_produccion.config(text=str(conforme))
+        desperdicio = sum([
+            float(w.calcular().total_desperdicio) for w in self.widgets
+        ])
+        produccion = sum([
+            float(w.calcular().produccion_conforme) for w in self.widgets
+        ])
         self.lbl_total_desperdicio.config(text=str(desperdicio))
-        porcentaje=desperdicio/100
-        self.lbl_porcentaje.config(text=str(porcentaje)+"%")
-        
-        
- 
+        self.lbl_porcentaje_desperdicio.config(
+            text=f"{(desperdicio / 100):.2f}%"
+        )
+        self.lbl_produccion.config(text=str(produccion))
 
 
 class FrameScrollbar(Frame):
