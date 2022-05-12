@@ -74,6 +74,7 @@ class Widget(Frame):
         #Para acceder a los elementos(métodos y atributos) de la clase padre frame se hará uso del método super(Herencia):
         super().__init__(master)
         self.turno = turno
+        
         self.setup_ui()
         #Se recorre cada widget para agregar un "espaciado" de 5  en "x" y en "y"  
         for widget in self.winfo_children():
@@ -306,19 +307,5 @@ class App(Tk):
            self.app.destroy()
 
 
-if __name__ == "__main__":
-    #Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
-    app = App(N=2)
-    #Titulo de la ventana
-    app.title("Wellperform plastics j ")
-    #Color de la ventana:
-    #Sin opciones:
-    app.overrideredirect(True) 
-    #Icono
-    app.iconbitmap('Icono.ico')
-    
-    #
-    #img = ImageTk.PhotoImage(Image.open("Imagen.jpeg"))
-    #panel = Label(app, width=400, height=100,image = img)
-    #panel.grid(row=1,  column=0, padx=2 , pady=2)
-    app.mainloop()
+#Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
+
