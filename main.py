@@ -60,19 +60,9 @@ def iniciarSesion():
                 MessageBox.showinfo("Conectado",f"Se inicio sesion en [{user.nombre}] con EXITO!!!")
                             #Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
                 app = App(N=2)
-                 #Titulo de la ventana
-                app.title("Wellperform plastics j ")
-                #Color de la ventana:
-                #Sin opciones:
-                app.overrideredirect(True) 
-                #Icono
-                app.iconbitmap('Icono.ico')
-
-                #
-                #img = ImageTk.PhotoImage(Image.open("Imagen.jpeg"))
-                #panel = Label(app, width=400, height=100,image = img)
-                #panel.grid(row=1,  column=0, padx=2 , pady=2)
+                 #Titulo de la ventana                
                 app.mainloop()
+                
             else:
                 MessageBox.showerror("Error","Contraseña incorrecta")
             break

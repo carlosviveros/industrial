@@ -292,6 +292,13 @@ class App(Tk):
         self.frame.grid(row=0, column=0, sticky="nsew")
         self.geometry("940x700")
         self.setup()
+        self.title("Wellperform plastics j ")
+    #Color de la ventana:
+    #Sin opciones:
+        self.overrideredirect(True) 
+    #Icono
+        self.iconbitmap('Icono.ico')
+    
 
     def setup(self):
         Label(
@@ -307,5 +314,7 @@ class App(Tk):
            self.app.destroy()
 
 
-#Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
-
+if __name__ == "__main__":
+    #Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
+    app = App(N=2)
+    app.mainloop()
