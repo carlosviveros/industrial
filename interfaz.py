@@ -1,4 +1,8 @@
+#Se importa el modulo datatime que permitirá el manejo de fechas y horas
 import datetime
+#se importa el modulo PIL para las imagenes
+from PIL import Image, ImageTk
+#Se importa el decorador dataclass junto con field 
 from dataclasses import dataclass, field
 from tkinter import (
     Button,
@@ -24,7 +28,7 @@ class Formulario:
     #Se definen los atributos de la clase con sus correspondientes tipos de datos:
     fecha: str
     turno: int
-    #Field describe el cada campo definido
+    #Field:  Describe cada campo definido
     hora_inicial: str = field(default="00:00")
     hora_final: str = field(default="00:00")
     jefe_turno: str = ""
@@ -35,9 +39,9 @@ class Formulario:
     #Total_desperidicio y producción conforme tomarán un valor booleano que en este caso será falso
     total_desperdicio: str = field(init=False)
     produccion_conforme: str = field(init=False)
-#Con el método post_init se inicalizan variables que dependerán de uno o más campos 
+#Con el método post_init se inicalizan variables que dependerán de uno o más campos.
     def __post_init__(self):
-        #en caso de no haber un valor en "desperdicio" y  "conforme", el total desperidicio y producción conforme tendrán por defecto un 0 que tra
+        #en caso de no haber un valor en "desperdicio" y  "conforme", el total desperidicio y producción conforme tendrán por defecto un 0
         
         try:
             desperdicio = float(self.preforma) + float(self.envase)
@@ -47,7 +51,7 @@ class Formulario:
         except ValueError:
             self.total_desperdicio = "0" 
             self.produccion_conforme = "0"
-#El método str como su nombre lo indica devolverá en String (cadena de texto), los datos de la clase para luego "mostrarlos" en donde se deseen poner
+#El método str como su nombre lo indica devolverá en String (cadena de texto), los datos de la clase para luego "mostrarlos"
     def to_str(self):
         return (
             f"Fecha: {self.fecha}\n"
@@ -71,7 +75,7 @@ class Widget(Frame):
         super().__init__(master)
         self.turno = turno
         self.setup_ui()
-        #Se recorre cada widget para agregar un "espaciado" de en 5  "x" y 5 en "y"  
+        #Se recorre cada widget para agregar un "espaciado" de 5  en "x" y en "y"  
         for widget in self.winfo_children():
             widget.grid_configure(padx=5, pady=5)
         #En este método se crean todos los widgets que se utilizarán,es decir, tanto labels como entradas de texto. Y de igual forma, se establecerá la  posición de acuerdo al grid 
@@ -138,9 +142,10 @@ class Widget(Frame):
         self.btn_informe = Button(
             self, text="Informe", bg="#EFDAD7", command=self.informe
         )
+        self.config(bg="#EFD345")
         self.btn_informe.grid(row=14, columnspan=2)
   
-  #El método "calcular" captura en la instancia "formulario"  las diferentes entradas de texto
+  #El método calcular "captura"  en la instancia "formulario" de las diferentes entradas de texto
     def calcular(self):
         formulario = Formulario(
             fecha=_today_date(),
@@ -171,9 +176,12 @@ class Widget(Frame):
         w.insert("end", self.f.to_str())
         #Para que no sea modificado el texto de la ventana, el state deberá ser  disabled
         w.config(state="disabled")
+        w.config(bg="#9AD0EC")
+        #w.iconbitmap('Icono.ico')
+        #self.overrideredirect(True)
         w.pack()
         
-        #"Limpia" o "resetea" las diferentes entradas 
+        #"Limpia", "resetea" o "elimina" el valor actual de las diferentes entradas 
     def limpiar(self):
         self.ent_hora_inicial.delete("0", "end")
         self.ent_hora_final.delete("0", "end")
@@ -187,6 +195,7 @@ class Widget(Frame):
 class Container(Frame):
   
     def __init__(self, master, turno):
+        #Como ya se dijo antes, la clase container deberá acceder a los atributos y métodos de la clase padre: Frame
         super().__init__(master)
         #Número de columnas:3
         self.N = 3
@@ -197,7 +206,8 @@ class Container(Frame):
         )
         Label(self, text=f"Fecha: {_today_date()}").grid(row=0, column=1)
         self.setup_ui()
-        self.master.after(1000, self.update)
+        self.master.after(200, self.update)
+        self.config(bg="#BABD42")
 #Frame de totales
     def setup_ui(self):
         for n in range(self.N):
@@ -225,6 +235,10 @@ class Container(Frame):
         )
         self.lbl_produccion = Label(self.lbf_informe, text="")
         self.lbl_produccion.grid(row=0, column=6)
+        self.cerrar = Button(
+             text="Cerrar", command=self.quit
+        )
+        self.cerrar.grid(row=7, column=0, padx=5, pady=5)
 
     def update(self):
         #Suma los totales de desperdicio y producción de cada maquina
@@ -235,13 +249,15 @@ class Container(Frame):
             float(w.calcular().produccion_conforme) for w in self.widgets
         ])
         #El texto del label total_desperdicio será igual a desperdicio
-        self.lbl_total_desperdicio.config(text=str(desperdicio))
+        self.lbl_total_desperdicio.config(text=str(desperdicio))   
         #El texto del label porcentaje desperdicio será igual a desperdicio/100
         self.lbl_porcentaje_desperdicio.config(
             text=f"{(desperdicio / 100):.2f}%"
         )
         #El texto del label produccion será igual a produccion
         self.lbl_produccion.config(text=str(produccion))
+        
+   
 
 #lA clase FrameScrollbar hereda la clase frame
 #En resumidas cuentas la barra de desplazamiento
@@ -273,7 +289,7 @@ class App(Tk):
         self.grid_columnconfigure(0, weight=1)
         self.frame = FrameScrollbar(self)
         self.frame.grid(row=0, column=0, sticky="nsew")
-        self.geometry("920x630")
+        self.geometry("940x700")
         self.setup()
 
     def setup(self):
@@ -285,9 +301,24 @@ class App(Tk):
             w = Container(self.frame.frame, n + 1)
             w.grid(row=n, column=0, padx=15, pady=15)
             self.widgets.append(w)
+    
+    def quit(self):
+           self.app.destroy()
 
 
 if __name__ == "__main__":
     #Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
     app = App(N=2)
+    #Titulo de la ventana
+    app.title("Wellperform plastics j ")
+    #Color de la ventana:
+    #Sin opciones:
+    app.overrideredirect(True) 
+    #Icono
+    app.iconbitmap('Icono.ico')
+    
+    #
+    #img = ImageTk.PhotoImage(Image.open("Imagen.jpeg"))
+    #panel = Label(app, width=400, height=100,image = img)
+    #panel.grid(row=1,  column=0, padx=2 , pady=2)
     app.mainloop()
