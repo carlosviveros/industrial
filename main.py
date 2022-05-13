@@ -1,89 +1,81 @@
-from tkinter import *
-from tkinter import ttk as ttk
-from tkinter import messagebox as MessageBox
-from usuarios import usuario
+from tkinter import Entry, Frame, Label, Tk, messagebox
+from tkinter.ttk import Button
+from typing import Tuple
 from interfaz import *
+from models import UserManager, LoginService
 
-root = Tk()
 
-nombreUsuario = StringVar()
-contraUsuario = StringVar()
-usuarios = []
+class LoginWindow(Frame):
 
-def createGUI():
-    # ventana principal
-    #root = Tk()
-    root.title("Login Usuario")
+    def __init__(
+        self,
+        master,
+        manager: UserManager,
+        service: LoginService,
+    ) -> None:
+        super().__init__(master)
+        self.setup_ui()
+        self.manager = manager()
+        self.service = service
 
-    # mainFrame
-    mainFrame = Frame(root)
-    mainFrame.grid(row=0, column=1)
-    mainFrame.config(width=480,height=320)#,bg="lightblue")
+    def setup_ui(self):
+        Label(
+            self, text="Welcome back!", font=("Arial", 24)
+        ).grid(row=0, columnspan=2, padx=10, pady=10)
+        for i, text in enumerate(("Username", "Password"), 1):
+            Label(self, text=text).grid(row=i, column=0)
+        self.username = Entry(self)
+        self.username.grid(row=1, column=1)
+        self.password = Entry(self, show="*")
+        self.password.grid(row=2, column=1)
+        self.signup = Button(self, text="Sign Up", command=self.signup_user)
+        self.signup.grid(row=3, column=0, ipadx=5, ipady=5, padx=10, pady=10)
+        self.login = Button(self, text="Log In", command=self.login_user)
+        self.login.grid(row=3, column=1, ipadx=5, ipady=5, padx=10, pady=10)
 
-    # textos y titulos
-    titulo = Label(mainFrame,text="Login de Usuario con Python",font=("Arial",24))
-    titulo.grid(column=0,row=0,padx=10,pady=10,columnspan=2)
+    def login_user(self):
+        service = self.service(self.manager)
+        try:
+            service.login(*self._validated_data())
+            messagebox.showinfo("Success", "User logged in")
+            indu = Root(N=2)
+            indu.mainloop()
+        except Exception as e:
+            messagebox.showerror("Error", e)
 
-    nombreLabel = Label(mainFrame,text="Nombre: ")
-    nombreLabel.grid(column=0,row=1)
-    passLabel = Label(mainFrame,text="Contraseña: ")
-    passLabel.grid(column=0,row=2)
+    def signup_user(self) -> None:
+        try:
+            self.manager.add_user(*self._validated_data())
+            self._clear()
+            messagebox.showinfo("Success", "User created")
+        except Exception as e:
+            messagebox.showerror("Error", e)
 
-    # entradas de texto
-    # nombreUsuario = StringVar()
-    nombreUsuario.set("")
-    nombreEntry = Entry(mainFrame,textvariable=nombreUsuario)
-    nombreEntry.grid(column=1,row=1)
+    def _clear(self):
+        self.username.delete(0, "end")
+        self.password.delete(0, "end")
 
-    # contraUsuario = StringVar()
-    contraUsuario.set("")
-    contraEntry = Entry(mainFrame,textvariable=contraUsuario,show="*")
-    contraEntry.grid(column=1,row=2)
+    def _validated_data(self) -> Tuple[str, str]:
+        username, password = self.username.get(), self.password.get()
+        if not username and not password:
+            raise Exception("Username and password are required")
+        if not password:
+            raise Exception("Password is required")
+        if not username:
+            raise Exception("Username is required")
+        return username, password
 
-    # botones
-    iniciarSesionButton = ttk.Button(mainFrame,text="Iniciar Sesion",command=iniciarSesion)
-    iniciarSesionButton.grid(column=1,row=3,ipadx=5,ipady=5,padx=10,pady=10)
 
-    cerrarSesionButton = ttk.Button(mainFrame,text="Cerrar Sesion",command=cerrarSesion)
+class App(Tk):
 
-    registrarButton = ttk.Button(mainFrame,text="Registrar",command=registrarUsuario)
-    registrarButton.grid(column=0,row=3,ipadx=5,ipady=5,padx=10,pady=10)
+    def __init__(self, manager: UserManager, service: LoginService) -> None:
+        super().__init__()
+        self.title("Ayuda en Python")
+        self.geometry("260x160")
+        LoginWindow(self, manager, service).grid(row=0, column=1)
     
-    root.mainloop()
 
 
-def iniciarSesion():
-    for user in usuarios:
-        if user.nombre == nombreUsuario.get():
-            test = user.conectar(contraUsuario.get())
-            if test:
-                MessageBox.showinfo("Conectado",f"Se inicio sesion en [{user.nombre}] con EXITO!!!")
-                            #Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
-                app = App(N=2)
-                 #Titulo de la ventana                
-                app.mainloop()
-                
-            else:
-                MessageBox.showerror("Error","Contraseña incorrecta")
-            break
-    else:
-        MessageBox.showerror("Error","No existen usuarios con ese nombre")
-
-def cerrarSesion():
-    #root.destroy()
-    pass
-
-def registrarUsuario():
-    name = nombreUsuario.get()
-    passwd = contraUsuario.get()
-    newUser = usuario(name,passwd)
-    usuarios.append(newUser)
-    MessageBox.showinfo("Resgistro Exitoso",f"Se registro el usuario [{name}] con EXITO!!!")
-    nombreUsuario.set("")
-    contraUsuario.set("")
-
-if __name__=="__main__":
-    # user1 = usuario(input("Ingrese un nombre: "),input("Igrese una contraseña: "))
-    user1 = usuario("lucas","1234")
-    usuarios.append(user1)
-    createGUI()
+if __name__ == "__main__":
+    app = App(UserManager, LoginService)
+    app.mainloop()

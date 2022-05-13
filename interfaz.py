@@ -239,7 +239,7 @@ class Container(Frame):
         self.cerrar = Button(
              text="Cerrar", command=self.quit
         )
-        self.cerrar.grid(row=7, column=0, padx=5, pady=5)
+        self.cerrar.grid(row=7, column=10, padx=5, pady=5)
 
     def update(self):
         #Suma los totales de desperdicio y producción de cada maquina
@@ -280,7 +280,7 @@ class FrameScrollbar(Frame):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
 #La venta raíz:
-class App(Tk):
+class Root(Tk):
 
     def __init__(self, N):
         super().__init__()
@@ -316,5 +316,5 @@ class App(Tk):
 
 if __name__ == "__main__":
     #Como son dos turnos, N deberá ser igual a 2, pues se precisa un número de fila por cada turno: Turno1 arriba, Turno2 abajo 
-    app = App(N=2)
-    app.mainloop()
+    indu = Root(N=2)
+    indu.mainloop()
