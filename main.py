@@ -17,7 +17,7 @@ def createGUI():
 
     # mainFrame
     mainFrame = Frame(root)
-    mainFrame.pack()
+    mainFrame.grid(row=0, column=1)
     mainFrame.config(width=480,height=320)#,bg="lightblue")
 
     # textos y titulos
